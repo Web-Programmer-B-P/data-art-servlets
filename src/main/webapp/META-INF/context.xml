@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!-- Specify a JDBC datasource -->
+    <Resource name="jdbc/todoPool"
+              auth="Container"
+              type="javax.sql.DataSource"
+              username="postgres"
+              password="password"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://127.0.0.1:5432/data_art?autoReconnect=true"
+              validationQuery="select 1"
+              maxActive="100"
+              maxIdle="10"
+              validationInterval="30000"
+              initialSize="10"
+              jmxEnabled="true"
+    />
+</Context>
