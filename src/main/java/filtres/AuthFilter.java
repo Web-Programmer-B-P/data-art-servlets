@@ -16,12 +16,13 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        User currentUser = (User)req.getSession().getAttribute("user");
+        User currentUser = (User) req.getSession().getAttribute("user");
         String currentRequestUri = req.getRequestURI();
-        if (currentUser == null && !currentRequestUri.contains(SING_UP_URI)) {
-            req.getRequestDispatcher(SING_IN_URI).forward(req, resp);
-        } else  {
+        if (currentUser != null || (currentRequestUri.contains(SING_IN_URI)
+                || currentRequestUri.contains(SING_UP_URI))) {
             chain.doFilter(req, resp);
+        } else {
+            req.getRequestDispatcher(SING_IN_URI).forward(req, resp);
         }
     }
 }

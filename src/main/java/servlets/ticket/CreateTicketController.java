@@ -1,9 +1,6 @@
 package servlets.ticket;
 
-import model.Ticket;
-import model.User;
 import service.TicketService;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,9 +10,8 @@ import java.io.IOException;
 
 @WebServlet("/create-ticket")
 public class CreateTicketController extends HttpServlet {
-    private static final TicketService TICKET_SERVICE = TicketService.getInstance();
+    private final TicketService ticketService = TicketService.getInstance();
     private static final String CREATE_TICKET_JSP_URI = "ticket/create_ticket.jsp";
-    private static final String ERROR_MESSAGE = "Fill all fields!";
     private static final String USER_TICKETS_URI = "/list-tickets";
 
     @Override
@@ -24,17 +20,8 @@ public class CreateTicketController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String description = req.getParameter("desc");
-        if (!(name.isEmpty() && description.isEmpty())) {
-            User currentUser = (User) req.getSession().getAttribute("user");
-            Ticket newTicket = new Ticket(name, description, currentUser.getId());
-            TICKET_SERVICE.addTicket(newTicket);
-            resp.sendRedirect(USER_TICKETS_URI);
-        } else {
-            req.setAttribute("error", ERROR_MESSAGE);
-            doGet(req, resp);
-        }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ticketService.addTicket(req);
+        resp.sendRedirect(USER_TICKETS_URI);
     }
 }

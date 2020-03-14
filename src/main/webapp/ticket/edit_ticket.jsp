@@ -11,10 +11,7 @@
 <body>
 <div class="container" style="width: 45%; margin-top: 10%">
     <h3 style="text-align: center">Редактировать</h3>
-    <c:if test="${error != ''}">
-    <p style="color: red">${error}<p>
-    </c:if>
-    <form action="${pageContext.request.contextPath}/edit-ticket" method="post">
+    <form action="${pageContext.request.contextPath}/save-item" method="post">
         <div class="form-group">
             <label for="name">Наименование тикета:</label>
             <input type="text" name="name" class="form-control" placeholder="Введите наименование тикета" id="name"
@@ -24,9 +21,6 @@
             <label for="desc">Описание:</label>
             <textarea type="text" rows="5" name="desc" class="form-control" placeholder="Введите описание тикета"
                       id="desc">${ticket.description}</textarea>
-        </div>
-        <div class="form-group">
-            <input type="hidden" name="action" class="form-control" value="save">
         </div>
         <div class="form-group">
             <input type="hidden" name="id" class="form-control" value="${ticket.id}">

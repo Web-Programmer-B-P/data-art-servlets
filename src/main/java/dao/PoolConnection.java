@@ -12,6 +12,8 @@ import java.sql.SQLException;
 public class PoolConnection {
     private static final PoolConnection INSTANCE = new PoolConnection();
     private static final Logger LOG = LogManager.getLogger(PoolConnection.class.getName());
+    private static final String DATA_SOURCE_PATH = "java:comp/env/jdbc/todoPool";
+    private static final String ERROR_MESSAGE_POOL_CONNECTION = "Смотри в инициализацию контекста пула";
 
     private PoolConnection() {
 
@@ -26,10 +28,10 @@ public class PoolConnection {
         Connection connection = null;
         try {
             context = new InitialContext();
-            DataSource ds = (DataSource)context.lookup("java:comp/env/jdbc/todoPool");
-            connection = ds.getConnection();
+            DataSource dataSource = (DataSource)context.lookup(DATA_SOURCE_PATH);
+            connection = dataSource.getConnection();
         } catch (NamingException | SQLException e) {
-            LOG.error("Смотри в инициализацию контекста пула", e);
+            LOG.error(ERROR_MESSAGE_POOL_CONNECTION, e);
         }
         return connection;
     }

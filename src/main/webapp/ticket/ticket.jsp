@@ -34,9 +34,6 @@
                         <div class="form-group">
                             <input type="hidden"  name="ticketId" value="${ticket.id}" class="form-control">
                         </div>
-                        <div class="form-group">
-                            <input type="hidden"  name="action" value="edit" class="form-control">
-                        </div>
                         <button type="submit" class="btn btn-success btn-sm">Редактировать</button>
                     </form>
                 </td>
@@ -45,10 +42,7 @@
                         <div class="form-group">
                             <input type="hidden"  name="ticketId" value="${ticket.id}" class="form-control">
                         </div>
-                        <div class="form-group">
-                            <input type="hidden"  name="action" value="delete" class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-danger btn-sm">Удалить тикет</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                     </form>
                 </td>
             </tr>

@@ -14,7 +14,7 @@
     <c:if test="${error != ''}">
     <p style="color: red">${error}<p>
     </c:if>
-    <form action="${pageContext.request.contextPath}/sing-in" method="post">
+    <form action="${pageContext.request.contextPath}/authorisation-user" method="post">
         <div class="form-group">
             <label for="login">Логин:</label>
             <input type="text" name="login" class="form-control" placeholder="Введите логин" id="login">

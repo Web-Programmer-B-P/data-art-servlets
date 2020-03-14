@@ -8,31 +8,25 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/list-tickets")
 public class TicketListController extends HttpServlet {
-    private final static TicketService TICKET_SERVICE = TicketService.getInstance();
-    private static final String TICKET_TICKET_JSP_URI = "ticket/ticket.jsp";
+    private final TicketService ticketService = TicketService.getInstance();
+    private static final String TICKET_JSP_URI = "ticket/ticket.jsp";
     private static final String CREATE_TICKET_URI = "/create-ticket";
-    private static final String SING_IN_URI = "/sing-in";
+    private static final int SIZE_OF_EMPTY = 0;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        if (!session.isNew()) {
-            User currentUser = (User) session.getAttribute("user");
-            List<Ticket> tickets = TICKET_SERVICE.findAllTicketsById(currentUser.getId());
-            if (tickets.size() > 0) {
-                req.setAttribute("tickets", tickets);
-                req.getRequestDispatcher(TICKET_TICKET_JSP_URI).forward(req, resp);
-            } else {
-                resp.sendRedirect(CREATE_TICKET_URI);
-            }
+        User currentUser = (User) req.getSession().getAttribute("user");
+        List<Ticket> tickets = ticketService.findAllTicketsById(currentUser.getId());
+        if (tickets.size() > SIZE_OF_EMPTY) {
+            req.setAttribute("tickets", tickets);
+            req.getRequestDispatcher(TICKET_JSP_URI).forward(req, resp);
         } else {
-            resp.sendRedirect(SING_IN_URI);
+            resp.sendRedirect(CREATE_TICKET_URI);
         }
     }
 }

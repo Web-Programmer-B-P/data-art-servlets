@@ -3,18 +3,16 @@ package dao;
 import model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import utils.DaoUtils;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserDao {
+    private final PoolConnection poolConnection = PoolConnection.getInstance();
     private final static UserDao INSTANCE = new UserDao();
-    private final static PoolConnection poolConnection = PoolConnection.getInstance();
     private static final Logger LOG = LogManager.getLogger(UserDao.class.getName());
     private static final String FIND_BY_LOGIN_AND_PASSWORD = "SELECT * FROM users WHERE login=? AND password=?";
     private static final String ADD_NEW_USER = "INSERT INTO users (login, password) VALUES (?, ?)";
-    private static final String FIND_ALL = "SELECT * FROM users";
+    private static final String MESSAGE_FIND_BY_LOGIN_AND_PASSWORD = "Смотри в поиск пользователя по логину и паролю";
+    private static final String MESSAGE_ADD = "Смотри в добавление нового пользователя";
 
     private UserDao() {
 
@@ -24,34 +22,18 @@ public class UserDao {
         return INSTANCE;
     }
 
-    public List<User> findAll() {
-        List<User> allUsers = new ArrayList<>();
-        try (Connection connection = poolConnection.getConnection();
-             Statement prepare = connection.createStatement()) {
-            try (ResultSet resultSet = prepare.executeQuery(FIND_ALL)) {
-                while (resultSet.next()) {
-                    allUsers.add(DaoUtils.fillUser(resultSet));
-                }
-            }
-        } catch (SQLException e) {
-            LOG.error("Смотри в выборку всех пользователей", e);
-        }
-        return allUsers;
-    }
-
-
     public User findUserByLoginAndPassword(String login, String pass) {
         User foundUser = null;
         try (Connection connection = poolConnection.getConnection();
              PreparedStatement prepare = connection.prepareStatement(FIND_BY_LOGIN_AND_PASSWORD)) {
-            DaoUtils.prepareQueryToExecuteUser(login, pass, prepare);
+            prepareQueryToExecuteUser(login, pass, prepare);
             try (ResultSet resultSet = prepare.executeQuery()) {
                 if (resultSet.next()) {
-                    foundUser = DaoUtils.fillUser(resultSet);
+                    foundUser = fillUser(resultSet);
                 }
             }
         } catch (SQLException e) {
-            LOG.error("Смотри в поиск пользователя по логину и паролю", e);
+            LOG.error(MESSAGE_FIND_BY_LOGIN_AND_PASSWORD, e);
         }
         return foundUser;
     }
@@ -61,7 +43,7 @@ public class UserDao {
         try (Connection connection = poolConnection.getConnection();
              PreparedStatement prepare = connection
                 .prepareStatement(ADD_NEW_USER, Statement.RETURN_GENERATED_KEYS)) {
-            DaoUtils.prepareQueryToExecuteUser(user.getLogin(), user.getPassword(), prepare);
+            prepareQueryToExecuteUser(user.getLogin(), user.getPassword(), prepare);
             prepare.execute();
             try (ResultSet res = prepare.getGeneratedKeys()) {
                 if (res.next()) {
@@ -69,8 +51,20 @@ public class UserDao {
                 }
             }
         } catch (SQLException e) {
-            LOG.error("Смотри в добавление нового пользователя", e);
+            LOG.error(MESSAGE_ADD, e);
         }
         return newId;
+    }
+
+    private User fillUser(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        String name = resultSet.getString("login");
+        String login = resultSet.getString("password");
+        return new User(id, name, login);
+    }
+
+    private void prepareQueryToExecuteUser(String login, String pass, PreparedStatement prepare) throws SQLException {
+        prepare.setString(1, login);
+        prepare.setString(2, pass);
     }
 }

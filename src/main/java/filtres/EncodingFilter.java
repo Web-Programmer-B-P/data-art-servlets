@@ -8,12 +8,14 @@ import java.io.IOException;
 
 @WebFilter("*")
 public class EncodingFilter implements Filter {
+    private static final String CHARACTER_ENCODING = "UTF-8";
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding(CHARACTER_ENCODING);
+        resp.setCharacterEncoding(CHARACTER_ENCODING);
         chain.doFilter(request, response);
     }
 }
